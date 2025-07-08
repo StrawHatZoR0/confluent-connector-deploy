@@ -12,7 +12,7 @@
     "rate.limiting.every.n": "0",
     "write.strategy": "DefaultWriteModelStrategy",
     "kafka.auth.mode": "SERVICE_ACCOUNT",
-    "kafka.service.account.id": "sa-7ynprno",
+    "kafka.service.account.id": "${SERVICE_ACCOUNT_ID}",
     "topics": "topic_0",
     "connection.host": "cluster0.nya8pvh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
     "connection.user": "test_user",
