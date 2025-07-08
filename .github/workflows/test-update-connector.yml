@@ -1,25 +1,24 @@
-name: Test Update Connector Config
+name: Update Connector SA Key
 
 on:
   workflow_dispatch:
 
 jobs:
-  test-update-sa:
+  update-sa:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Inject new SA ID for testing
+      - name: Update Service Account in deploy_connector.json
         run: |
           jq --arg sa_id "${{ secrets.NEW_SERVICE_ACCOUNT_ID }}" \
-            '.config["kafka.service.account.id"] = $sa_id' \
-            deploy_connector.json > updated_connector.json
+            '.config["kafka.service.account.id"] = $sa_id' deploy_connector.json > tmp && mv tmp deploy_connector.json
 
-      - name: Deploy updated config to Confluent
+      - name: Deploy connector with updated SA key
         run: |
           curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
             -X PUT \
             -H "Content-Type: application/json" \
-            --data @updated_connector.json \
+            --data @deploy_connector.json \
             "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
