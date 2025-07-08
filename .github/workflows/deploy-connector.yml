@@ -1,0 +1,19 @@
+name: Deploy Connector to Confluent Cloud
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy Connector
+        run: |
+          curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
+            -X PUT \
+            -H "Content-Type: application/json" \
+            --data @deploy_connector.json \
+            "https://api.confluent.cloud/connect/v1/environments/${{ secrets.CONNECT_ENV_ID }}/clusters/${{ secrets.CONNECT_CLUSTER_ID }}/connectors/${{ secrets.CONNECTOR_NAME }}/config"
