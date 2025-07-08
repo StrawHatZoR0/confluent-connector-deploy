@@ -10,13 +10,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Pause Connector (Old API Key)
-        run: |
-          curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
-            -X PUT \
-            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/pause"
-
       - name: Generate Updated Config File
         run: |
           cat > deploy_connector.json <<EOF
@@ -80,9 +73,3 @@ jobs:
             -H "Content-Type: application/json" \
             --data @deploy_connector.json \
             "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
-
-      - name: Resume Connector (New API Key)
-        run: |
-          curl -u "${{ secrets.NEW_CC_API_KEY }}:${{ secrets.NEW_CC_API_SECRET }}" \
-            -X PUT \
-            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/resume"
