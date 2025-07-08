@@ -16,12 +16,10 @@ jobs:
           -X PUT \
           "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/pause"
 
-      - name: Update Service Account ID in deploy_connector.json
-        run: |
-          tmp_file=$(mktemp)
-          jq --arg sa_id "${{ secrets.NEW_SERVICE_ACCOUNT_ID }}" \
-            '.config["kafka.service.account.id"] = $sa_id' deploy_connector.json > "$tmp_file" && mv "$tmp_file" deploy_connector.json
-          echo "Updated kafka.service.account.id in deploy_connector.json"
+      - name: Inject new SA ID into JSON
+  run: |
+    jq '.config["kafka.service.account.id"] = "${{ secrets.NEW_SERVICE_ACCOUNT_ID }}"' deploy_connector.json > tmp.json && mv tmp.json deploy_connector.json
+
           
       - name: Deploy connector with new SA key and new API key
         run: |
