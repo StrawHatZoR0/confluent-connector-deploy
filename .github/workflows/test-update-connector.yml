@@ -17,7 +17,7 @@ jobs:
 
       - name: Deploy connector with updated SA key
         run: |
-          curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
+          curl -u "${{ secrets.NEW_CC_API_KEY }}:${{ secrets.NEW_CC_API_SECRET }}" \
             -X PUT \
             -H "Content-Type: application/json" \
             --data @deploy_connector.json \
