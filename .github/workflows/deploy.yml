@@ -1,4 +1,4 @@
-name: Deploy MongoDB Sink Connector
+name: Deploy using Secrets MongoDB Sink Connector
 
 on:
   workflow_dispatch:
