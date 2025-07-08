@@ -1,4 +1,4 @@
-name: Update Connector SA Key
+name: Rotate Connector SA Key
 
 on:
   workflow_dispatch:
