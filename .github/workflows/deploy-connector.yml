@@ -10,11 +10,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Update connector with new SA key
-        run: |
-          jq --arg sa_id "${{ secrets.SERVICE_ACCOUNT_ID }}" \
-             '. + { "kafka.service.account.id": $sa_id }' deploy_connector.json > deploy_connector.json
-
           curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
             -X PUT \
             -H "Content-Type: application/json" \
