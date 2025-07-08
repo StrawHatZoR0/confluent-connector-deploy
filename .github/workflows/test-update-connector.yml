@@ -4,21 +4,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-sa:
+  rotate-sa:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Pause the connector using current API key
+        run: |
+          curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
+          -X PUT \
+          "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/pause"
+
       - name: Update Service Account in deploy_connector.json
         run: |
           jq --arg sa_id "${{ secrets.NEW_SERVICE_ACCOUNT_ID }}" \
-            '.config["kafka.service.account.id"] = $sa_id' deploy_connector.json > tmp && mv tmp deploy_connector.json
+          '.config["kafka.service.account.id"] = $sa_id' deploy_connector.json > tmp.json && mv tmp.json deploy_connector.json
 
-      - name: Deploy connector with updated SA key
+      - name: Deploy connector with new SA key and new API key
         run: |
           curl -u "${{ secrets.NEW_CC_API_KEY }}:${{ secrets.NEW_CC_API_SECRET }}" \
-            -X PUT \
-            -H "Content-Type: application/json" \
-            --data @deploy_connector.json \
-            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
+          -X PUT \
+          -H "Content-Type: application/json" \
+          --data @deploy_connector.json \
+          "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
+
+      - name: Resume the connector using new API key
+        run: |
+          curl -u "${{ secrets.NEW_CC_API_KEY }}:${{ secrets.NEW_CC_API_SECRET }}" \
+          -X PUT \
+          "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/resume"
