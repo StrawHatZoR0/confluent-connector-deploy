@@ -18,7 +18,7 @@ jobs:
 
       - name: Inject new SA ID into JSON
         run: |
-            jq '.config["kafka.service.account.id"] = "${{ secrets.NEW_SERVICE_ACCOUNT_ID }}"' deploy_connector.json > tmp.json && mv tmp.json deploy_connector.jso  n
+            jq '.config["kafka.service.account.id"] = "${{ secrets.NEW_SERVICE_ACCOUNT_ID }}"' deploy_connector.json > tmp.json && mv tmp.json deploy_connector.json
 
           
       - name: Deploy connector with new SA key and new API key
