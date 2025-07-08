@@ -1,19 +1,22 @@
-name: Deploy Connector to Confluent Cloud
+name: Update Connector SA Key
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  rotate-sa:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Deploy Connector
+      - name: Update connector with new SA key
         run: |
+          jq --arg sa_id "${{ secrets.SERVICE_ACCOUNT_ID }}" \
+             '. + { "kafka.service.account.id": $sa_id }' deploy_connector.json > deploy_connector.json
+
           curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
             -X PUT \
             -H "Content-Type: application/json" \
             --data @deploy_connector.json \
-            "https://api.confluent.cloud/connect/v1/environments/${{ secrets.CONNECT_ENV_ID }}/clusters/${{ secrets.CONNECT_CLUSTER_ID }}/connectors/${{ secrets.CONNECTOR_NAME }}/config"
+            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
