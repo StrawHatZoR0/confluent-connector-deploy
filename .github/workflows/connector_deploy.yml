@@ -11,7 +11,7 @@ jobs:
       CC_API_KEY: ${{ secrets.CC_API_KEY }}
       CC_API_SECRET: ${{ secrets.CC_API_SECRET }}
       MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-      NEW_SERVICE_ACCOUNT_ID: ${{ secrets.SERVICE_ACCOUNT_ID }}
+      SERVICE_ACCOUNT_ID: ${{ secrets.SERVICE_ACCOUNT_ID }}
 
     steps:
       - name: Checkout code
