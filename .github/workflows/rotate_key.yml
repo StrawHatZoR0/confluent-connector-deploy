@@ -22,7 +22,7 @@ jobs:
 
       - name: Deploy connector using REST API
         run: |
-          curl -u "$NEW_CC_API_KEY:$NEW_CC_API_SECRET" \
+          curl -u "$CC_API_KEY:$CC_API_SECRET" \
             -X PUT \
             -H "Content-Type: application/json" \
             --data @tmp_connector.json \
