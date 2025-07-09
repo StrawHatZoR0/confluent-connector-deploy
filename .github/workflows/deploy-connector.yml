@@ -1,4 +1,4 @@
-name: Update Connector SA Key
+name: Deploy MongoDB Connector (First Time)
 
 on:
   workflow_dispatch:
@@ -6,14 +6,20 @@ on:
 jobs:
   deploy-connector:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Deploy Connector
+      - name: Deploy connector using secrets
         run: |
-          curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
-            -X PUT \
+          envsubst < deploy_connector.json | curl -u "${{ secrets.CC_API_KEY }}:${{ secrets.CC_API_SECRET }}" \
+            -X POST \
             -H "Content-Type: application/json" \
-            --data @deploy_connector.json \
-            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
+            --data @- \
+            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors"
+        env:
+          CC_API_KEY: ${{ secrets.CC_API_KEY }}
+          CC_API_SECRET: ${{ secrets.CC_API_SECRET }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          SERVICE_ACCOUNT_ID: ${{ secrets.SERVICE_ACCOUNT_ID }}
