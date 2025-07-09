@@ -1,0 +1,32 @@
+name: Key roation of connector
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-connector:
+    runs-on: ubuntu-latest
+
+    env:
+      CC_API_KEY: ${{ secrets.NEW_CC_API_KEY }}
+      CC_API_SECRET: ${{ secrets.NEW_CC_API_SECRET }}
+      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+      SERVICE_ACCOUNT_ID: ${{ secrets.NEW_SERVICE_ACCOUNT_ID }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create temp config with secrets
+        run: |
+          envsubst < deploy_connector.json > tmp_connector.json
+
+      - name: Deploy connector using REST API
+        run: |
+          curl -u "$NEW_CC_API_KEY:$NEW_CC_API_SECRET" \
+            -X PUT \
+            -H "Content-Type: application/json" \
+            --data @tmp_connector.json \
+            "https://api.confluent.cloud/connect/v1/environments/env-q5r2r2/clusters/lkc-qvvy9m/connectors/MongoDbAtlasSinkConnector_0/config"
+
+      - name: Clean up
+        run: rm tmp_connector.json
