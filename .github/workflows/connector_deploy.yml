@@ -1,4 +1,4 @@
-name: Deploy MongoDB Sink Connector
+name: First Deploy MongoDB Sink Connector
 
 on:
   workflow_dispatch:
